@@ -529,9 +529,8 @@
       <h1 class="hero__title">Веб-калькулятор коэффициента конкордации</h1>
       <p class="hero__text">
         Система обрабатывает обычные и связные ранги. Если один эксперт ставит нескольким объектам одинаковые значения,
-        такие позиции автоматически преобразуются в средние ранги. В результатах по каждой итерации показывается
-        подробная обработанная таблица с ранговой матрицей, столбцом T<sub>i</sub>, суммами рангов,
-        отклонениями от средней суммы и квадратами отклонений.
+        такие позиции автоматически преобразуются в средние ранги. После матрицы «эксперт — объект» формируется
+        отдельная матрица с обработанными рангами, а затем запускаются итерации расчёта.
       </p>
     </section>
 
@@ -610,7 +609,8 @@
         <section class="card workspace-card">
           <h2 class="workspace-title">Матрица «эксперт — объект»</h2>
           <p class="workspace-text">
-            Здесь вводится исходная матрица значений. В результатах будут показаны уже обработанные ранги по каждой итерации.
+            Здесь вводится исходная матрица значений. После нажатия на кнопку расчёта ниже появится матрица с обработанными рангами,
+            а затем — итерации расчёта без изменения логики.
           </p>
 
           <div class="matrix-shell">
@@ -622,8 +622,8 @@
           <h2 class="results__title">Результаты расчёта</h2>
           <div id="resultsContainer">
             <div class="results-empty">
-              Здесь появятся таблицы по итерациям, коэффициент конкордации, проверка по χ²,
-              найденные связки и итоговый порядок объектов.
+              Здесь появятся матрица обработанных рангов, таблицы по итерациям, коэффициент конкордации,
+              проверка по χ², найденные связки и итоговый порядок объектов.
             </div>
           </div>
         </section>
@@ -805,8 +805,8 @@
       buildInputMatrix();
       resultsContainer.innerHTML = `
         <div class="results-empty">
-          Здесь появятся таблицы по итерациям, коэффициент конкордации, проверка по χ²,
-          найденные связки и итоговый порядок объектов.
+          Здесь появятся матрица обработанных рангов, таблицы по итерациям, коэффициент конкордации,
+          проверка по χ², найденные связки и итоговый порядок объектов.
         </div>
       `;
     };
@@ -1164,6 +1164,72 @@
       `;
     };
 
+    const renderProcessedRankMatrixBlock = (firstIterationData, objectNames) => {
+      const calculationResult = firstIterationData.calculationResult;
+
+      let tableHeadHtml = "<tr><th>Эксперт / Объект</th>";
+
+      objectNames.forEach((objectName) => {
+        tableHeadHtml += `<th>${escapeHtml(objectName)}</th>`;
+      });
+
+      tableHeadHtml += "<th>T<sub>i</sub></th></tr>";
+
+      let tableBodyHtml = "";
+
+      firstIterationData.activeExperts.forEach((expertData) => {
+        tableBodyHtml += `<tr><th>${escapeHtml(expertData.expertName)}</th>`;
+
+        expertData.normalizedRanks.forEach((rankValue) => {
+          tableBodyHtml += `<td>${escapeHtml(formatNumber(rankValue, 3))}</td>`;
+        });
+
+        tableBodyHtml += `<td>${escapeHtml(formatNumber(expertData.tieCoefficient, 3))}</td>`;
+        tableBodyHtml += "</tr>";
+      });
+
+      const tableFootHtml = `
+        <tr>
+          <th>Сумма рангов S<sub>j</sub></th>
+          ${calculationResult.columnSums.map((sumValue) => `<td>${escapeHtml(formatNumber(sumValue, 3))}</td>`).join("")}
+          <td>${escapeHtml(formatNumber(calculationResult.totalTieCoefficient, 3))}</td>
+        </tr>
+        <tr>
+          <th>Отклонение от средней суммы (S<sub>j</sub> - S<sub>ср</sub>), где S<sub>ср</sub> = ${escapeHtml(formatNumber(calculationResult.averageColumnSum, 3))}</th>
+          ${calculationResult.deviations.map((deviationValue) => `<td>${escapeHtml(formatNumber(deviationValue, 3))}</td>`).join("")}
+          <td>—</td>
+        </tr>
+        <tr>
+          <th>Квадраты отклонений (S<sub>j</sub> - S<sub>ср</sub>)²</th>
+          ${calculationResult.squaredDeviations.map((squareValue) => `<td>${escapeHtml(formatNumber(squareValue, 3))}</td>`).join("")}
+          <td>${escapeHtml(formatNumber(calculationResult.squaredDeviationSum, 3))}</td>
+        </tr>
+      `;
+
+      return `
+        <div class="result-block">
+          <div class="result-block__header">
+            <h3 class="result-block__title">Матрица с обработанными рангами</h3>
+          </div>
+          <div class="result-block__content">
+            <div class="matrix-shell">
+              <div class="matrix-scroll">
+                <table class="matrix-table">
+                  <thead>${tableHeadHtml}</thead>
+                  <tbody>${tableBodyHtml}</tbody>
+                  <tfoot>${tableFootHtml}</tfoot>
+                </table>
+              </div>
+            </div>
+
+            <div class="iteration-note">
+              На основе этой обработанной матрицы далее выполняется итерация 1.
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
     const renderIterationTable = (iterationData, iterationIndex, objectNames) => {
       const calculationResult = iterationData.calculationResult;
 
@@ -1188,7 +1254,7 @@
         tableBodyHtml += "</tr>";
       });
 
-      let tableFootHtml = `
+      const tableFootHtml = `
         <tr>
           <th>Сумма рангов S<sub>j</sub></th>
           ${calculationResult.columnSums.map((sumValue) => `<td>${escapeHtml(formatNumber(sumValue, 3))}</td>`).join("")}
@@ -1271,8 +1337,10 @@
     };
 
     const renderResults = (iterationList, objectNames, alphaValue) => {
+      const firstIterationData = iterationList[0];
       const finalIteration = iterationList[iterationList.length - 1];
       const finalCalculationResult = finalIteration.calculationResult;
+
       const objectRating = getObjectRating(
         objectNames,
         finalCalculationResult.columnSums,
@@ -1308,6 +1376,11 @@
         `
         : "";
 
+      const processedRankMatrixHtml = renderProcessedRankMatrixBlock(
+        firstIterationData,
+        objectNames
+      );
+
       const iterationTablesHtml = iterationList.map((iterationData, iterationIndex) => {
         return renderIterationTable(iterationData, iterationIndex, objectNames);
       }).join("");
@@ -1340,8 +1413,9 @@
           </div>
         </div>
 
+        ${processedRankMatrixHtml}
         ${iterationTablesHtml}
-        ${renderTieGroups(finalIteration.activeExperts, objectNames)}
+        ${renderTieGroups(firstIterationData.activeExperts, objectNames)}
         ${renderObjectRating(objectRating)}
         ${removedExpertsHtml}
       `;
