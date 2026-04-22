@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Коэффициент конкордации — веб-калькулятор</title>
+  <title>Коэффициент конкордации — калькулятор со связными рангами</title>
   <style>
     :root {
-      --page-bg: #0f172a;
-      --card-bg: #111827;
-      --muted-bg: #1f2937;
+      --page-bg: #020617;
+      --card-bg: rgba(15, 23, 42, 0.92);
+      --card-bg-soft: rgba(15, 23, 42, 0.72);
       --border-color: #334155;
+      --border-color-soft: rgba(51, 65, 85, 0.7);
       --accent-color: #38bdf8;
-      --accent-soft-color: rgba(56, 189, 248, 0.12);
+      --accent-color-soft: rgba(56, 189, 248, 0.12);
       --text-color: #e5e7eb;
       --text-muted-color: #94a3b8;
       --success-color: #22c55e;
       --warning-color: #f59e0b;
       --danger-color: #ef4444;
-      --shadow-color: rgba(15, 23, 42, 0.5);
+      --shadow-color: rgba(2, 6, 23, 0.52);
     }
 
     * {
@@ -27,64 +28,64 @@
     body {
       margin: 0;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
       color: var(--text-color);
+      background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
     }
 
     .layout {
-      width: min(1400px, calc(100% - 32px));
+      width: min(1500px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 24px 0 48px;
+      padding: 24px 0 40px;
     }
 
     .hero {
       margin-bottom: 24px;
       padding: 28px;
-      background: rgba(15, 23, 42, 0.78);
-      border: 1px solid rgba(56, 189, 248, 0.18);
       border-radius: 24px;
+      border: 1px solid rgba(56, 189, 248, 0.18);
+      background: rgba(15, 23, 42, 0.82);
       box-shadow: 0 24px 48px var(--shadow-color);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
     }
 
     .hero__title {
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       font-size: clamp(28px, 4vw, 40px);
       line-height: 1.1;
     }
 
     .hero__text {
       margin: 0;
-      color: var(--text-muted-color);
+      max-width: 1050px;
       font-size: 16px;
       line-height: 1.6;
-      max-width: 960px;
+      color: var(--text-muted-color);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 420px minmax(0, 1fr);
+      grid-template-columns: 430px minmax(0, 1fr);
       gap: 24px;
       align-items: start;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1180px) {
       .grid {
         grid-template-columns: 1fr;
       }
     }
 
     .panel {
-      background: rgba(17, 24, 39, 0.92);
+      overflow: hidden;
       border: 1px solid var(--border-color);
       border-radius: 22px;
+      background: var(--card-bg);
       box-shadow: 0 20px 40px var(--shadow-color);
-      overflow: hidden;
     }
 
     .panel__section {
       padding: 20px;
-      border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+      border-bottom: 1px solid var(--border-color-soft);
     }
 
     .panel__section:last-child {
@@ -98,10 +99,10 @@
     }
 
     .section-text {
-      margin: 0 0 16px;
-      color: var(--text-muted-color);
-      line-height: 1.5;
+      margin: 0 0 14px;
       font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-muted-color);
     }
 
     .field-grid {
@@ -128,14 +129,12 @@
 
     input,
     button,
-    textarea,
     select {
       font: inherit;
     }
 
     input[type="text"],
     input[type="number"],
-    textarea,
     select {
       width: 100%;
       padding: 12px 14px;
@@ -148,7 +147,6 @@
     }
 
     input:focus,
-    textarea:focus,
     select:focus {
       border-color: var(--accent-color);
       transform: translateY(-1px);
@@ -161,11 +159,11 @@
     }
 
     .button {
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      background: #0b1220;
-      color: var(--text-color);
       padding: 11px 16px;
       border-radius: 14px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      background: #0b1220;
+      color: var(--text-color);
       cursor: pointer;
       transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
     }
@@ -177,17 +175,17 @@
     }
 
     .button--primary {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.26), rgba(14, 165, 233, 0.18));
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(14, 165, 233, 0.16));
       border-color: rgba(56, 189, 248, 0.45);
     }
 
     .button--danger {
-      border-color: rgba(239, 68, 68, 0.35);
+      border-color: rgba(239, 68, 68, 0.32);
     }
 
     .button--danger:hover {
+      background: rgba(239, 68, 68, 0.08);
       border-color: var(--danger-color);
-      background: rgba(239, 68, 68, 0.1);
     }
 
     .list {
@@ -210,7 +208,7 @@
       height: 32px;
       padding: 0 10px;
       border-radius: 999px;
-      background: var(--accent-soft-color);
+      background: var(--accent-color-soft);
       color: var(--accent-color);
       font-size: 13px;
       font-weight: 700;
@@ -221,44 +219,38 @@
       gap: 18px;
     }
 
-    .note {
+    .note,
+    .warning,
+    .error,
+    .success {
       padding: 14px 16px;
+      border-radius: 16px;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .note {
       background: rgba(56, 189, 248, 0.08);
       border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 16px;
       color: #cbd5e1;
-      line-height: 1.5;
-      font-size: 14px;
     }
 
     .warning {
-      padding: 14px 16px;
       background: rgba(245, 158, 11, 0.08);
-      border: 1px solid rgba(245, 158, 11, 0.2);
-      border-radius: 16px;
+      border: 1px solid rgba(245, 158, 11, 0.24);
       color: #fde68a;
-      line-height: 1.5;
-      font-size: 14px;
     }
 
     .error {
-      padding: 14px 16px;
       background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      border-radius: 16px;
+      border: 1px solid rgba(239, 68, 68, 0.24);
       color: #fecaca;
-      line-height: 1.5;
-      font-size: 14px;
     }
 
     .success {
-      padding: 14px 16px;
       background: rgba(34, 197, 94, 0.08);
-      border: 1px solid rgba(34, 197, 94, 0.2);
-      border-radius: 16px;
+      border: 1px solid rgba(34, 197, 94, 0.24);
       color: #bbf7d0;
-      line-height: 1.5;
-      font-size: 14px;
     }
 
     .matrix-wrap {
@@ -269,18 +261,18 @@
 
     table {
       width: 100%;
+      min-width: 760px;
       border-collapse: collapse;
-      min-width: 700px;
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.66);
     }
 
     th,
     td {
       padding: 10px 12px;
-      border-bottom: 1px solid rgba(51, 65, 85, 0.7);
-      border-right: 1px solid rgba(51, 65, 85, 0.7);
       text-align: center;
       vertical-align: middle;
+      border-right: 1px solid rgba(51, 65, 85, 0.7);
+      border-bottom: 1px solid rgba(51, 65, 85, 0.7);
     }
 
     th:last-child,
@@ -288,7 +280,8 @@
       border-right: none;
     }
 
-    tr:last-child td {
+    tr:last-child td,
+    tr:last-child th {
       border-bottom: none;
     }
 
@@ -296,29 +289,28 @@
       position: sticky;
       top: 0;
       background: #10192c;
-      z-index: 1;
+      z-index: 2;
     }
 
     tbody th {
-      background: rgba(15, 23, 42, 0.95);
       position: sticky;
       left: 0;
-      z-index: 1;
+      background: rgba(15, 23, 42, 0.96);
       text-align: left;
-      min-width: 200px;
+      min-width: 190px;
+      z-index: 1;
     }
 
     .matrix-input {
-      min-width: 76px;
-      padding: 10px 8px;
+      min-width: 86px;
       text-align: center;
     }
 
     .card {
       padding: 18px;
-      background: rgba(15, 23, 42, 0.72);
-      border: 1px solid var(--border-color);
       border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg-soft);
     }
 
     .card__title {
@@ -329,7 +321,7 @@
 
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 12px;
       margin-bottom: 16px;
     }
@@ -337,8 +329,8 @@
     .stat {
       padding: 14px;
       border-radius: 16px;
-      background: rgba(2, 6, 23, 0.46);
       border: 1px solid rgba(51, 65, 85, 0.8);
+      background: rgba(2, 6, 23, 0.42);
     }
 
     .stat__label {
@@ -377,26 +369,37 @@
       border: 1px solid rgba(239, 68, 68, 0.24);
     }
 
+    .formula-box {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(2, 6, 23, 0.42);
+      color: #cbd5e1;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
     .ranking-list {
       display: grid;
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 12px;
     }
 
     .ranking-item {
       display: grid;
-      grid-template-columns: 72px 1fr auto;
+      grid-template-columns: 84px 1fr auto;
       gap: 12px;
       align-items: center;
       padding: 12px 14px;
       border-radius: 16px;
-      background: rgba(2, 6, 23, 0.42);
       border: 1px solid rgba(51, 65, 85, 0.7);
+      background: rgba(2, 6, 23, 0.42);
     }
 
     .ranking-item__place {
-      font-weight: 700;
       color: var(--accent-color);
+      font-weight: 700;
     }
 
     .ranking-item__name {
@@ -404,27 +407,55 @@
     }
 
     .ranking-item__meta {
-      color: var(--text-muted-color);
       font-size: 14px;
+      color: var(--text-muted-color);
     }
 
     .subtle {
-      color: var(--text-muted-color);
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.55;
+      color: var(--text-muted-color);
+    }
+
+    .inline-math {
+      font-family: "Times New Roman", Georgia, serif;
+      color: #f8fafc;
+    }
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .two-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .list-compact {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 0;
+    }
+
+    .list-compact__item {
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(51, 65, 85, 0.7);
+      background: rgba(2, 6, 23, 0.36);
+      font-size: 14px;
+      line-height: 1.55;
     }
 
     .footer-note {
-      margin-top: 16px;
-      padding-top: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
       border-top: 1px solid rgba(51, 65, 85, 0.65);
       color: var(--text-muted-color);
       font-size: 13px;
       line-height: 1.55;
-    }
-
-    .hidden {
-      display: none;
     }
   </style>
 </head>
@@ -433,9 +464,10 @@
     <section class="hero">
       <h1 class="hero__title">Веб-калькулятор коэффициента конкордации</h1>
       <p class="hero__text">
-        Эта страница реализует полный путь из алгоритма: ввод экспертов и объектов, ранговая матрица,
-        расчёт суммы рангов, среднего значения, коэффициента конкордации W, проверки по χ²,
-        поиск эксперта-диссидента и повторный пересчёт до согласования или до слишком малого состава комиссии.
+        Эта версия умеет обрабатывать связные ранги. Если один эксперт дал нескольким объектам одинаковое значение,
+        система автоматически переводит такие группы в средние ранги по правилу из методики:
+        связанные позиции заменяются их средним арифметическим, после чего считается коэффициент конкордации W,
+        критерий χ² и при необходимости ищется эксперт-диссидент.
       </p>
     </section>
 
@@ -444,7 +476,8 @@
         <section class="panel__section">
           <h2 class="section-title">1. Размерность задачи</h2>
           <p class="section-text">
-            Каждый эксперт должен присвоить объектам ранги от 1 до m без повторений в своей строке.
+            Можно вводить обычные ранги или значения со связками. Чем меньше число, тем выше место.
+            Одинаковые значения в строке трактуются как связные ранги.
           </p>
 
           <div class="field-grid">
@@ -457,6 +490,15 @@
               <label for="objectCountInput">Количество объектов</label>
               <input id="objectCountInput" type="number" min="2" max="100" value="4" />
             </div>
+          </div>
+
+          <div class="field">
+            <label for="alphaSelect">Уровень значимости α</label>
+            <select id="alphaSelect">
+              <option value="0.10">0.10</option>
+              <option value="0.05" selected>0.05</option>
+              <option value="0.01">0.01</option>
+            </select>
           </div>
 
           <div class="button-row">
@@ -478,13 +520,14 @@
         <section class="panel__section">
           <h2 class="section-title">4. Действия</h2>
           <div class="button-row">
+            <button id="refreshHeadersButton" class="button" type="button">Обновить заголовки</button>
             <button id="calculateButton" class="button button--primary" type="button">Рассчитать</button>
             <button id="clearMatrixButton" class="button button--danger" type="button">Очистить матрицу</button>
           </div>
 
           <div class="footer-note">
-            Локально страница работает без сервера. Для публикации подойдёт GitHub Pages,
-            потому что здесь один статический файл без бэкенда. Маленькая и упрямая штука.
+            Если изменил имена экспертов или объектов, нажми «Обновить заголовки» — матрица сохранится,
+            а подписи обновятся.
           </div>
         </section>
       </aside>
@@ -494,7 +537,9 @@
           <div class="panel__section">
             <h2 class="section-title">Матрица «эксперт — объект»</h2>
             <p class="section-text">
-              В каждой строке должны встретиться все числа от 1 до количества объектов ровно по одному разу.
+              Вводи числа так, как удобно. Например: <span class="inline-math">1, 2, 2, 4</span> или
+              <span class="inline-math">10, 20, 20, 30</span>. Система сама нормализует строку в ранги
+              с учётом связок.
             </p>
             <div id="matrixContainer" class="matrix-wrap"></div>
           </div>
@@ -514,8 +559,10 @@
   <script>
     const expertCountInput = document.getElementById("expertCountInput");
     const objectCountInput = document.getElementById("objectCountInput");
+    const alphaSelect = document.getElementById("alphaSelect");
     const buildFormButton = document.getElementById("buildFormButton");
     const fillDemoButton = document.getElementById("fillDemoButton");
+    const refreshHeadersButton = document.getElementById("refreshHeadersButton");
     const calculateButton = document.getElementById("calculateButton");
     const clearMatrixButton = document.getElementById("clearMatrixButton");
 
@@ -525,21 +572,23 @@
     const messageContainer = document.getElementById("messageContainer");
     const resultsContainer = document.getElementById("resultsContainer");
 
-    const roundValue = (value, digits = 6) => {
-      return Number.parseFloat(Number(value).toFixed(digits));
-    };
+    const EPSILON = 1e-9;
 
-    const escapeHtml = (value) => {
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    };
+    const roundValue = (value, digits = 6) => Number.parseFloat(Number(value).toFixed(digits));
 
-    const createDefaultNames = (prefix, count) => {
-      return Array.from({ length: count }, (_, index) => `${prefix} ${index + 1}`);
+    const escapeHtml = (value) => String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+    const areEqualNumbers = (leftValue, rightValue) => Math.abs(leftValue - rightValue) < EPSILON;
+
+    const createDefaultNames = (prefix, count) => Array.from({ length: count }, (_, index) => `${prefix} ${index + 1}`);
+
+    const createEmptyMatrix = (expertCount, objectCount) => {
+      return Array.from({ length: expertCount }, () => Array.from({ length: objectCount }, () => ""));
     };
 
     const readPositiveInteger = (inputElement, fallbackValue) => {
@@ -547,19 +596,68 @@
       if (!Number.isInteger(parsedValue) || parsedValue < 2) {
         return fallbackValue;
       }
-
       return parsedValue;
     };
 
-    const renderNameInputs = () => {
-      const expertCount = readPositiveInteger(expertCountInput, 5);
-      const objectCount = readPositiveInteger(objectCountInput, 4);
+    const clearOutput = () => {
+      messageContainer.innerHTML = "";
+      resultsContainer.innerHTML = "";
+    };
 
+    const addMessage = (type, html) => {
+      const messageElement = document.createElement("div");
+      messageElement.className = type;
+      messageElement.innerHTML = html;
+      messageContainer.appendChild(messageElement);
+    };
+
+    const captureCurrentExpertNames = () => {
+      const inputElements = Array.from(document.querySelectorAll(".expert-name-input"));
+      if (inputElements.length === 0) {
+        return [];
+      }
+      return inputElements.map((inputElement, index) => inputElement.value.trim() || `Эксперт ${index + 1}`);
+    };
+
+    const captureCurrentObjectNames = () => {
+      const inputElements = Array.from(document.querySelectorAll(".object-name-input"));
+      if (inputElements.length === 0) {
+        return [];
+      }
+      return inputElements.map((inputElement, index) => inputElement.value.trim() || `Объект ${index + 1}`);
+    };
+
+    const captureCurrentMatrixValues = () => {
+      const expertCount = document.querySelectorAll(".expert-name-input").length;
+      const objectCount = document.querySelectorAll(".object-name-input").length;
+
+      if (expertCount === 0 || objectCount === 0) {
+        return [];
+      }
+
+      return Array.from({ length: expertCount }, (_, expertIndex) => {
+        return Array.from({ length: objectCount }, (_, objectIndex) => {
+          const inputElement = document.querySelector(`.matrix-input[data-expert-index="${expertIndex}"][data-object-index="${objectIndex}"]`);
+          return inputElement ? inputElement.value : "";
+        });
+      });
+    };
+
+    const resizeNames = (existingNames, prefix, targetCount) => {
+      return Array.from({ length: targetCount }, (_, index) => existingNames[index] || `${prefix} ${index + 1}`);
+    };
+
+    const resizeMatrix = (existingMatrix, targetExpertCount, targetObjectCount) => {
+      return Array.from({ length: targetExpertCount }, (_, expertIndex) => {
+        return Array.from({ length: targetObjectCount }, (_, objectIndex) => {
+          return existingMatrix?.[expertIndex]?.[objectIndex] ?? "";
+        });
+      });
+    };
+
+    const renderNameInputs = (expertNames, objectNames) => {
       expertNamesContainer.innerHTML = "";
       objectNamesContainer.innerHTML = "";
-
-      const expertNames = createDefaultNames("Эксперт", expertCount);
-      const objectNames = createDefaultNames("Объект", objectCount);
 
       expertNames.forEach((expertName, expertIndex) => {
         const rowElement = document.createElement("div");
@@ -592,24 +690,7 @@
       });
     };
 
-    const getExpertNames = () => {
-      return Array.from(document.querySelectorAll(".expert-name-input")).map((inputElement, index) => {
-        const trimmedValue = inputElement.value.trim();
-        return trimmedValue || `Эксперт ${index + 1}`;
-      });
-    };
-
-    const getObjectNames = () => {
-      return Array.from(document.querySelectorAll(".object-name-input")).map((inputElement, index) => {
-        const trimmedValue = inputElement.value.trim();
-        return trimmedValue || `Объект ${index + 1}`;
-      });
-    };
-
-    const renderMatrix = () => {
-      const expertNames = getExpertNames();
-      const objectNames = getObjectNames();
-
+    const renderMatrix = (expertNames, objectNames, matrixValues) => {
       const headerCellsHtml = objectNames
         .map((objectName) => `<th>${escapeHtml(objectName)}</th>`)
         .join("");
@@ -618,16 +699,16 @@
         .map((expertName, expertIndex) => {
           const cellInputsHtml = objectNames
             .map((_, objectIndex) => {
+              const value = matrixValues?.[expertIndex]?.[objectIndex] ?? "";
               return `
                 <td>
                   <input
                     class="matrix-input"
                     type="number"
-                    min="1"
-                    step="1"
-                    max="${objectNames.length}"
+                    step="any"
                     data-expert-index="${expertIndex}"
                     data-object-index="${objectIndex}"
+                    value="${escapeHtml(value)}"
                   />
                 </td>
               `;
@@ -647,7 +728,7 @@
         <table>
           <thead>
             <tr>
-              <th>Эксперт \\ Объект</th>
+              <th>Эксперт \ Объект</th>
               ${headerCellsHtml}
             </tr>
           </thead>
@@ -658,61 +739,57 @@
       `;
     };
 
-    const rebuildAll = () => {
-      renderNameInputs();
-      renderMatrix();
+    const rebuildAll = ({ preserve = true } = {}) => {
+      const expertCount = readPositiveInteger(expertCountInput, 5);
+      const objectCount = readPositiveInteger(objectCountInput, 4);
+
+      const existingExpertNames = preserve ? captureCurrentExpertNames() : [];
+      const existingObjectNames = preserve ? captureCurrentObjectNames() : [];
+      const existingMatrix = preserve ? captureCurrentMatrixValues() : [];
+
+      const expertNames = resizeNames(existingExpertNames, "Эксперт", expertCount);
+      const objectNames = resizeNames(existingObjectNames, "Объект", objectCount);
+      const matrixValues = resizeMatrix(existingMatrix, expertCount, objectCount);
+
+      renderNameInputs(expertNames, objectNames);
+      renderMatrix(expertNames, objectNames, matrixValues);
       clearOutput();
     };
 
-    const clearOutput = () => {
-      messageContainer.innerHTML = "";
-      resultsContainer.innerHTML = "";
+    const rebuildHeadersOnly = () => {
+      const expertNames = captureCurrentExpertNames();
+      const objectNames = captureCurrentObjectNames();
+      const matrixValues = captureCurrentMatrixValues();
+      renderMatrix(expertNames, objectNames, matrixValues);
+      clearOutput();
     };
 
-    const addMessage = (type, text) => {
-      const messageElement = document.createElement("div");
-      messageElement.className = type;
-      messageElement.innerHTML = text;
-      messageContainer.appendChild(messageElement);
-    };
+    const getExpertNames = () => captureCurrentExpertNames();
+    const getObjectNames = () => captureCurrentObjectNames();
 
-    const readRankMatrix = () => {
+    const readRawMatrix = () => {
       const expertNames = getExpertNames();
       const objectNames = getObjectNames();
 
-      const rankMatrix = expertNames.map((_, expertIndex) => {
+      return expertNames.map((_, expertIndex) => {
         return objectNames.map((_, objectIndex) => {
-          const inputElement = document.querySelector(
-            `.matrix-input[data-expert-index="${expertIndex}"][data-object-index="${objectIndex}"]`
-          );
-
+          const inputElement = document.querySelector(`.matrix-input[data-expert-index="${expertIndex}"][data-object-index="${objectIndex}"]`);
           if (!inputElement) {
             return NaN;
           }
-
-          return Number.parseInt(inputElement.value, 10);
+          return Number.parseFloat(inputElement.value);
         });
       });
-
-      return rankMatrix;
     };
 
-    const validateRankMatrix = (rankMatrix, expertNames, objectNames) => {
-      const objectCount = objectNames.length;
-      const expectedRanks = Array.from({ length: objectCount }, (_, index) => index + 1);
+    const validateRawMatrix = (rawMatrix, expertNames) => {
+      for (let expertIndex = 0; expertIndex < rawMatrix.length; expertIndex += 1) {
+        const currentRow = rawMatrix[expertIndex];
 
-      for (let expertIndex = 0; expertIndex < rankMatrix.length; expertIndex += 1) {
-        const currentRow = rankMatrix[expertIndex];
-
-        if (currentRow.some((value) => !Number.isInteger(value))) {
-          return `У эксперта «${expertNames[expertIndex]}» есть пустые или некорректные значения.`;
-        }
-
-        const sortedRow = [...currentRow].sort((leftValue, rightValue) => leftValue - rightValue);
-
-        for (let rankIndex = 0; rankIndex < expectedRanks.length; rankIndex += 1) {
-          if (sortedRow[rankIndex] !== expectedRanks[rankIndex]) {
-            return `Строка эксперта «${expertNames[expertIndex]}» должна содержать все ранги от 1 до ${objectCount} без повторений.`;
+        for (let objectIndex = 0; objectIndex < currentRow.length; objectIndex += 1) {
+          const currentValue = currentRow[objectIndex];
+          if (!Number.isFinite(currentValue)) {
+            return `У эксперта «${expertNames[expertIndex]}» есть пустые или некорректные значения.`;
           }
         }
       }
@@ -720,17 +797,89 @@
       return null;
     };
 
-    const calculateColumnSums = (rankMatrix) => {
-      const objectCount = rankMatrix[0].length;
+    const normalizeRowWithTies = (rawRow, objectNames) => {
+      const preparedValues = rawRow.map((rawValue, objectIndex) => ({ rawValue, objectIndex }));
 
-      return Array.from({ length: objectCount }, (_, objectIndex) => {
-        return rankMatrix.reduce((sumAccumulator, expertRow) => sumAccumulator + expertRow[objectIndex], 0);
+      const sortedValues = [...preparedValues].sort((leftValue, rightValue) => {
+        if (!areEqualNumbers(leftValue.rawValue, rightValue.rawValue)) {
+          return leftValue.rawValue - rightValue.rawValue;
+        }
+        return leftValue.objectIndex - rightValue.objectIndex;
+      });
+
+      const normalizedRow = Array.from({ length: rawRow.length }, () => 0);
+      const tieGroups = [];
+      let tieCorrectionTerm = 0;
+      let currentPosition = 1;
+      let scanIndex = 0;
+
+      while (scanIndex < sortedValues.length) {
+        let endIndex = scanIndex;
+
+        while (
+          endIndex + 1 < sortedValues.length &&
+          areEqualNumbers(sortedValues[endIndex + 1].rawValue, sortedValues[scanIndex].rawValue)
+        ) {
+          endIndex += 1;
+        }
+
+        const groupSize = endIndex - scanIndex + 1;
+        const groupStartPosition = currentPosition;
+        const groupEndPosition = currentPosition + groupSize - 1;
+        const averageRank = (groupStartPosition + groupEndPosition) / 2;
+        const currentGroupObjectIndices = [];
+
+        for (let groupIndex = scanIndex; groupIndex <= endIndex; groupIndex += 1) {
+          const currentObjectIndex = sortedValues[groupIndex].objectIndex;
+          normalizedRow[currentObjectIndex] = averageRank;
+          currentGroupObjectIndices.push(currentObjectIndex);
+        }
+
+        if (groupSize > 1) {
+          tieCorrectionTerm += groupSize ** 3 - groupSize;
+          tieGroups.push({
+            rawValue: sortedValues[scanIndex].rawValue,
+            groupSize,
+            groupStartPosition,
+            groupEndPosition,
+            averageRank,
+            objectIndices: currentGroupObjectIndices,
+            objectNames: currentGroupObjectIndices.map((objectIndex) => objectNames[objectIndex])
+          });
+        }
+
+        currentPosition += groupSize;
+        scanIndex = endIndex + 1;
+      }
+
+      return {
+        normalizedRow,
+        tieGroups,
+        tieCorrectionTerm
+      };
+    };
+
+    const normalizeMatrixWithTies = (rawMatrix, expertNames, objectNames) => {
+      return rawMatrix.map((rawRow, expertIndex) => {
+        const normalizedRowData = normalizeRowWithTies(rawRow, objectNames);
+        return {
+          expertName: expertNames[expertIndex],
+          rawRow: [...rawRow],
+          normalizedRow: normalizedRowData.normalizedRow,
+          tieGroups: normalizedRowData.tieGroups,
+          tieCorrectionTerm: normalizedRowData.tieCorrectionTerm
+        };
       });
     };
 
-    const calculateAverageRankSum = (expertCount, objectCount) => {
-      return (expertCount * (objectCount + 1)) / 2;
+    const calculateColumnSums = (rankMatrix) => {
+      const objectCount = rankMatrix[0].length;
+      return Array.from({ length: objectCount }, (_, objectIndex) => {
+        return rankMatrix.reduce((sumAccumulator, currentRow) => sumAccumulator + currentRow[objectIndex], 0);
+      });
     };
+
+    const calculateAverageRankSum = (expertCount, objectCount) => (expertCount * (objectCount + 1)) / 2;
 
     const calculateSquaredDeviationSum = (columnSums, averageRankSum) => {
       return columnSums.reduce((sumAccumulator, columnSum) => {
@@ -738,27 +887,13 @@
       }, 0);
     };
 
-    const calculateConcordanceCoefficient = (expertCount, objectCount, squaredDeviationSum) => {
-      const denominator = (expertCount ** 2) * (objectCount ** 3 - objectCount);
-
-      if (denominator === 0) {
-        return 0;
-      }
-
-      return (12 * squaredDeviationSum) / denominator;
-    };
-
-    const calculateObjectRanksFromSums = (columnSums) => {
-      const preparedValues = columnSums.map((columnSum, objectIndex) => ({
-        columnSum,
-        objectIndex
-      }));
+    const calculateCollectiveObjectRanks = (columnSums) => {
+      const preparedValues = columnSums.map((columnSum, objectIndex) => ({ columnSum, objectIndex }));
 
       const sortedValues = [...preparedValues].sort((leftValue, rightValue) => {
-        if (leftValue.columnSum !== rightValue.columnSum) {
+        if (!areEqualNumbers(leftValue.columnSum, rightValue.columnSum)) {
           return leftValue.columnSum - rightValue.columnSum;
         }
-
         return leftValue.objectIndex - rightValue.objectIndex;
       });
 
@@ -772,25 +907,35 @@
 
         while (
           endIndex + 1 < sortedValues.length &&
-          sortedValues[endIndex + 1].columnSum === sortedValues[scanIndex].columnSum
+          areEqualNumbers(sortedValues[endIndex + 1].columnSum, sortedValues[scanIndex].columnSum)
         ) {
           endIndex += 1;
         }
 
-        const averageRank = (currentPosition + (currentPosition + (endIndex - scanIndex))) / 2;
-        const groupObjectIndices = [];
+        const groupSize = endIndex - scanIndex + 1;
+        const groupStartPosition = currentPosition;
+        const groupEndPosition = currentPosition + groupSize - 1;
+        const averageRank = (groupStartPosition + groupEndPosition) / 2;
+        const objectIndices = [];
 
         for (let groupIndex = scanIndex; groupIndex <= endIndex; groupIndex += 1) {
           const objectIndex = sortedValues[groupIndex].objectIndex;
           ranksByObjectIndex[objectIndex] = averageRank;
-          groupObjectIndices.push(objectIndex);
+          objectIndices.push(objectIndex);
         }
 
-        if (groupObjectIndices.length > 1) {
-          tieGroups.push(groupObjectIndices);
+        if (groupSize > 1) {
+          tieGroups.push({
+            groupSize,
+            groupStartPosition,
+            groupEndPosition,
+            averageRank,
+            objectIndices,
+            columnSum: sortedValues[scanIndex].columnSum
+          });
         }
 
-        currentPosition += endIndex - scanIndex + 1;
+        currentPosition += groupSize;
         scanIndex = endIndex + 1;
       }
 
@@ -801,23 +946,21 @@
       };
     };
 
-    const createRankingItems = (objectNames, columnSums, sortedValues) => {
-      return sortedValues
-        .map((item, sortedIndex) => {
-          return `
-            <div class="ranking-item">
-              <div class="ranking-item__place">№${sortedIndex + 1}</div>
-              <div class="ranking-item__name">${escapeHtml(objectNames[item.objectIndex])}</div>
-              <div class="ranking-item__meta">Сумма рангов: ${roundValue(columnSums[item.objectIndex], 6)}</div>
-            </div>
-          `;
-        })
-        .join("");
+    const calculateTieCorrectionTotal = (normalizedExpertData) => {
+      return normalizedExpertData.reduce((sumAccumulator, expertData) => sumAccumulator + expertData.tieCorrectionTerm, 0);
     };
 
-    const calculateDissidentData = (rankMatrix, objectRanks) => {
-      const differenceMatrix = rankMatrix.map((expertRow) => {
-        return expertRow.map((rankValue, objectIndex) => Math.abs(rankValue - objectRanks[objectIndex]));
+    const calculateConcordanceCoefficient = (expertCount, objectCount, squaredDeviationSum, tieCorrectionTotal) => {
+      const denominator = expertCount ** 2 * (objectCount ** 3 - objectCount) - expertCount * tieCorrectionTotal;
+      if (Math.abs(denominator) < EPSILON) {
+        return 0;
+      }
+      return (12 * squaredDeviationSum) / denominator;
+    };
+
+    const calculateDissidentData = (normalizedRankMatrix, collectiveRanksByObject) => {
+      const differenceMatrix = normalizedRankMatrix.map((expertRow) => {
+        return expertRow.map((rankValue, objectIndex) => Math.abs(rankValue - collectiveRanksByObject[objectIndex]));
       });
 
       const differenceSumsByExpert = differenceMatrix.map((differenceRow) => {
@@ -825,7 +968,6 @@
       });
 
       let dissidentIndex = 0;
-
       for (let expertIndex = 1; expertIndex < differenceSumsByExpert.length; expertIndex += 1) {
         if (differenceSumsByExpert[expertIndex] > differenceSumsByExpert[dissidentIndex]) {
           dissidentIndex = expertIndex;
@@ -869,11 +1011,6 @@
       let bValue = value + 1 - shape;
       let cValue = 1 / tinyValue;
       let dValue = 1 / Math.max(Math.abs(bValue), tinyValue);
-
-      if (bValue < 0 && Math.abs(bValue) < tinyValue) {
-        dValue = 1 / tinyValue;
-      }
-
       let hValue = dValue;
 
       for (let iterationIndex = 1; iterationIndex <= 1000; iterationIndex += 1) {
@@ -932,7 +1069,6 @@
       if (chiSquareValue <= 0) {
         return 0;
       }
-
       return regularizedGammaP(degreesFreedom / 2, chiSquareValue / 2);
     };
 
@@ -950,7 +1086,6 @@
 
       while (chiSquareCdf(highValue, degreesFreedom) < probability) {
         highValue *= 2;
-
         if (highValue > 1000000) {
           break;
         }
@@ -958,9 +1093,9 @@
 
       for (let iterationIndex = 0; iterationIndex < 120; iterationIndex += 1) {
         const middleValue = (lowValue + highValue) / 2;
-        const cdfValue = chiSquareCdf(middleValue, degreesFreedom);
+        const currentCdfValue = chiSquareCdf(middleValue, degreesFreedom);
 
-        if (cdfValue < probability) {
+        if (currentCdfValue < probability) {
           lowValue = middleValue;
         } else {
           highValue = middleValue;
@@ -970,14 +1105,55 @@
       return (lowValue + highValue) / 2;
     };
 
-    const buildColumnSummaryTable = (objectNames, columnSums) => {
+    const buildMatrixTable = (expertNames, objectNames, matrixValues, lastColumnLabel = null, lastColumnValues = null) => {
       const headerHtml = objectNames
         .map((objectName) => `<th>${escapeHtml(objectName)}</th>`)
         .join("");
 
-      const valuesHtml = columnSums
-        .map((columnSum) => `<td>${roundValue(columnSum, 6)}</td>`)
+      const rowsHtml = expertNames
+        .map((expertName, expertIndex) => {
+          const cellsHtml = matrixValues[expertIndex]
+            .map((cellValue) => `<td>${roundValue(cellValue, 6)}</td>`)
+            .join("");
+
+          const optionalLastColumnHtml = lastColumnLabel
+            ? `<td>${roundValue(lastColumnValues[expertIndex], 6)}</td>`
+            : "";
+
+          return `
+            <tr>
+              <th>${escapeHtml(expertName)}</th>
+              ${cellsHtml}
+              ${optionalLastColumnHtml}
+            </tr>
+          `;
+        })
         .join("");
+
+      const optionalHeaderHtml = lastColumnLabel ? `<th>${escapeHtml(lastColumnLabel)}</th>` : "";
+
+      return `
+        <div class="matrix-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Эксперт</th>
+                ${headerHtml}
+                ${optionalHeaderHtml}
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+    };
+
+    const buildColumnSummaryTable = (objectNames, columnSums, collectiveRanks) => {
+      const headerHtml = objectNames.map((objectName) => `<th>${escapeHtml(objectName)}</th>`).join("");
+      const sumCellsHtml = columnSums.map((columnSum) => `<td>${roundValue(columnSum, 6)}</td>`).join("");
+      const rankCellsHtml = collectiveRanks.map((rankValue) => `<td>${roundValue(rankValue, 6)}</td>`).join("");
 
       return `
         <div class="matrix-wrap">
@@ -991,88 +1167,120 @@
             <tbody>
               <tr>
                 <th>Sj — сумма рангов</th>
-                ${valuesHtml}
+                ${sumCellsHtml}
+              </tr>
+              <tr>
+                <th>R(Sj) — коллективный ранг</th>
+                ${rankCellsHtml}
               </tr>
             </tbody>
           </table>
         </div>
       `;
+    };
+
+    const buildTieInfoHtml = (normalizedExpertData) => {
+      const itemsHtml = normalizedExpertData.flatMap((expertData) => {
+        if (expertData.tieGroups.length === 0) {
+          return [];
+        }
+
+        return expertData.tieGroups.map((tieGroup) => {
+          const objectNamesText = tieGroup.objectNames.map(escapeHtml).join(", ");
+          return `
+            <div class="list-compact__item">
+              <strong>${escapeHtml(expertData.expertName)}</strong>: объекты <strong>${objectNamesText}</strong>
+              получили одинаковое значение <strong>${roundValue(tieGroup.rawValue, 6)}</strong>.
+              Им присвоен общий ранг <strong>${roundValue(tieGroup.averageRank, 6)}</strong>
+              как среднее позиций <strong>${tieGroup.groupStartPosition}</strong>–<strong>${tieGroup.groupEndPosition}</strong>.
+            </div>
+          `;
+        });
+      }).join("");
+
+      if (!itemsHtml) {
+        return `
+          <div class="note">
+            В этой итерации связных рангов нет. Каждая строка уже задаёт строгий порядок объектов.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="warning">
+          Обнаружены связные ранги. Для них применено правило средних рангов.
+        </div>
+        <div class="list-compact">
+          ${itemsHtml}
+        </div>
+      `;
+    };
+
+    const createRankingItems = (objectNames, columnSums, collectiveRanks, sortedValues) => {
+      return sortedValues.map((item, sortedIndex) => {
+        const objectIndex = item.objectIndex;
+        return `
+          <div class="ranking-item">
+            <div class="ranking-item__place">№${sortedIndex + 1}</div>
+            <div class="ranking-item__name">${escapeHtml(objectNames[objectIndex])}</div>
+            <div class="ranking-item__meta">
+              Сумма рангов: ${roundValue(columnSums[objectIndex], 6)} · коллективный ранг: ${roundValue(collectiveRanks[objectIndex], 6)}
+            </div>
+          </div>
+        `;
+      }).join("");
     };
 
     const buildDifferenceTable = (expertNames, objectNames, differenceMatrix, differenceSumsByExpert) => {
-      const headerHtml = objectNames
-        .map((objectName) => `<th>${escapeHtml(objectName)}</th>`)
-        .join("");
-
-      const rowsHtml = expertNames
-        .map((expertName, expertIndex) => {
-          const rowCellsHtml = differenceMatrix[expertIndex]
-            .map((differenceValue) => `<td>${roundValue(differenceValue, 6)}</td>`)
-            .join("");
-
-          return `
-            <tr>
-              <th>${escapeHtml(expertName)}</th>
-              ${rowCellsHtml}
-              <td>${roundValue(differenceSumsByExpert[expertIndex], 6)}</td>
-            </tr>
-          `;
-        })
-        .join("");
-
-      return `
-        <div class="matrix-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Эксперт</th>
-                ${headerHtml}
-                <th>ΣΔRi,j</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rowsHtml}
-            </tbody>
-          </table>
-        </div>
-      `;
+      return buildMatrixTable(expertNames, objectNames, differenceMatrix, "ΣΔRi,j", differenceSumsByExpert);
     };
 
-    const runWholeAlgorithm = (expertNames, objectNames, initialRankMatrix) => {
+    const runWholeAlgorithm = (expertNames, objectNames, rawMatrix, alpha) => {
       const iterations = [];
       const removedExperts = [];
       let activeExpertNames = [...expertNames];
-      let activeRankMatrix = initialRankMatrix.map((expertRow) => [...expertRow]);
+      let activeRawMatrix = rawMatrix.map((rawRow) => [...rawRow]);
       const objectCount = objectNames.length;
 
       while (true) {
+        const normalizedExpertData = normalizeMatrixWithTies(activeRawMatrix, activeExpertNames, objectNames);
+        const normalizedRankMatrix = normalizedExpertData.map((expertData) => [...expertData.normalizedRow]);
         const expertCount = activeExpertNames.length;
-        const columnSums = calculateColumnSums(activeRankMatrix);
+        const columnSums = calculateColumnSums(normalizedRankMatrix);
         const averageRankSum = calculateAverageRankSum(expertCount, objectCount);
         const squaredDeviationSum = calculateSquaredDeviationSum(columnSums, averageRankSum);
-        const concordanceCoefficient = calculateConcordanceCoefficient(expertCount, objectCount, squaredDeviationSum);
+        const tieCorrectionTotal = calculateTieCorrectionTotal(normalizedExpertData);
+        const concordanceCoefficient = calculateConcordanceCoefficient(
+          expertCount,
+          objectCount,
+          squaredDeviationSum,
+          tieCorrectionTotal
+        );
         const degreesFreedom = objectCount - 1;
         const chiSquareCalculated = expertCount * (objectCount - 1) * concordanceCoefficient;
-        const chiSquareCritical = chiSquareInverseCdf(0.95, degreesFreedom);
+        const chiSquareCritical = chiSquareInverseCdf(1 - alpha, degreesFreedom);
         const pValue = 1 - chiSquareCdf(chiSquareCalculated, degreesFreedom);
-        const { ranksByObjectIndex, sortedValues, tieGroups } = calculateObjectRanksFromSums(columnSums);
-
+        const collectiveObjectData = calculateCollectiveObjectRanks(columnSums);
         const currentIteration = {
           expertCount,
+          alpha,
           activeExpertNames: [...activeExpertNames],
-          rankMatrix: activeRankMatrix.map((expertRow) => [...expertRow]),
+          activeRawMatrix: activeRawMatrix.map((rawRow) => [...rawRow]),
+          normalizedExpertData,
+          normalizedRankMatrix,
           columnSums,
           averageRankSum,
           squaredDeviationSum,
+          tieCorrectionTotal,
           concordanceCoefficient,
           degreesFreedom,
           chiSquareCalculated,
           chiSquareCritical,
           pValue,
-          isAgreed: chiSquareCalculated > chiSquareCritical,
-          objectRanks: ranksByObjectIndex,
-          sortedValues,
-          tieGroups
+          collectiveRanks: collectiveObjectData.ranksByObjectIndex,
+          sortedValues: collectiveObjectData.sortedValues,
+          collectiveTieGroups: collectiveObjectData.tieGroups,
+          isAgreed: chiSquareCalculated >= chiSquareCritical
         };
 
         if (currentIteration.isAgreed) {
@@ -1088,8 +1296,7 @@
         if (activeExpertNames.length <= 2) {
           iterations.push({
             ...currentIteration,
-            stopReason:
-              "Дальше исключать экспертов уже нельзя: осталось слишком мало наблюдений для содержательного вывода."
+            stopReason: "Дальше исключать экспертов уже нельзя: останется слишком мало наблюдений для содержательного вывода."
           });
 
           return {
@@ -1100,43 +1307,44 @@
           };
         }
 
-        const dissidentData = calculateDissidentData(activeRankMatrix, ranksByObjectIndex);
-
+        const dissidentData = calculateDissidentData(normalizedRankMatrix, collectiveObjectData.ranksByObjectIndex);
         currentIteration.dissidentData = dissidentData;
         currentIteration.removedExpertName = activeExpertNames[dissidentData.dissidentIndex];
+
         iterations.push(currentIteration);
         removedExperts.push(activeExpertNames[dissidentData.dissidentIndex]);
 
-        activeExpertNames = activeExpertNames.filter((_, expertIndex) => {
-          return expertIndex !== dissidentData.dissidentIndex;
-        });
-
-        activeRankMatrix = activeRankMatrix.filter((_, expertIndex) => {
-          return expertIndex !== dissidentData.dissidentIndex;
-        });
+        activeExpertNames = activeExpertNames.filter((_, expertIndex) => expertIndex !== dissidentData.dissidentIndex);
+        activeRawMatrix = activeRawMatrix.filter((_, expertIndex) => expertIndex !== dissidentData.dissidentIndex);
       }
     };
 
     const renderIterationCard = (iteration, objectNames, iterationIndex, isLastIteration, finalStatus) => {
-      const hasTies = iteration.tieGroups.length > 0;
       const statusClassName = iteration.isAgreed ? "status-chip status-chip--success" : "status-chip status-chip--danger";
       const statusText = iteration.isAgreed ? "СОГЛАСОВАНО" : "НЕ СОГЛАСОВАНО";
+      const rawMatrix = iteration.activeRawMatrix;
+      const normalizedMatrix = iteration.normalizedRankMatrix;
+      const tieCorrectionBreakdownHtml = iteration.normalizedExpertData
+        .map((expertData) => {
+          return `<div class="list-compact__item"><strong>${escapeHtml(expertData.expertName)}</strong>: T = ${roundValue(expertData.tieCorrectionTerm, 6)}</div>`;
+        })
+        .join("");
 
-      const tieNoteHtml = hasTies
+      const collectiveTieNoteHtml = iteration.collectiveTieGroups.length > 0
         ? `
-          <div class="warning">
-            Обнаружены равные суммы рангов. Для внутренней ранжировки объектов использованы средние ранги связок.
-            Это практичное расширение, потому что в алгоритме из документа явная обработка таких ничьих не расписана.
+          <div class="warning" style="margin-top: 12px;">
+            В итоговой сумме рангов тоже есть ничьи. Для коллективного порядка объектов использованы средние ранги по тем же правилам.
           </div>
         `
         : "";
 
       const dissidentHtml = iteration.dissidentData
         ? `
-          <div class="card">
+          <div class="card" style="margin-top: 16px;">
             <h4 class="card__title">Поиск эксперта-диссидента</h4>
             <p class="section-text">
-              Исключается эксперт с максимальной суммой абсолютных разностей ΣΔRi,j.
+              Для каждого эксперта считается <span class="inline-math">ΔR<sub>i,j</sub> = |R<sub>i,j</sub> - R(S<sub>j</sub>)|</span>,
+              затем суммируются отклонения по всем объектам. Исключается эксперт с максимальной суммой.
             </p>
             ${buildDifferenceTable(
               iteration.activeExpertNames,
@@ -1151,23 +1359,17 @@
         `
         : "";
 
-      const finalNoteHtml =
-        isLastIteration && finalStatus === "СОГЛАСОВАНО"
-          ? `
-            <div class="success">
-              Итоговое упорядочение объектов получено. Лучшим считается объект с минимальной суммой рангов.
-            </div>
-          `
-          : "";
+      const finalNoteHtml = isLastIteration && finalStatus === "СОГЛАСОВАНО"
+        ? `
+          <div class="success" style="margin-top: 16px;">
+            Итоговое упорядочение объектов получено. Лучшим считается объект с минимальной суммой рангов.
+          </div>
+        `
+        : "";
 
-      const stopReasonHtml =
-        iteration.stopReason
-          ? `
-            <div class="error">
-              ${escapeHtml(iteration.stopReason)}
-            </div>
-          `
-          : "";
+      const stopReasonHtml = iteration.stopReason
+        ? `<div class="error" style="margin-top: 16px;">${escapeHtml(iteration.stopReason)}</div>`
+        : "";
 
       return `
         <section class="card">
@@ -1178,7 +1380,7 @@
 
           <div class="stat-grid">
             <div class="stat">
-              <span class="stat__label">Число экспертов p</span>
+              <span class="stat__label">Число экспертов m</span>
               <div class="stat__value">${iteration.expertCount}</div>
             </div>
             <div class="stat">
@@ -1186,8 +1388,12 @@
               <div class="stat__value">${roundValue(iteration.averageRankSum, 6)}</div>
             </div>
             <div class="stat">
-              <span class="stat__label">Σ(Sj − Sср)²</span>
+              <span class="stat__label">Σ(Sj - Sср)²</span>
               <div class="stat__value">${roundValue(iteration.squaredDeviationSum, 6)}</div>
+            </div>
+            <div class="stat">
+              <span class="stat__label">ΣT по связкам</span>
+              <div class="stat__value">${roundValue(iteration.tieCorrectionTotal, 6)}</div>
             </div>
             <div class="stat">
               <span class="stat__label">Коэффициент W</span>
@@ -1198,22 +1404,49 @@
               <div class="stat__value">${roundValue(iteration.chiSquareCalculated, 6)}</div>
             </div>
             <div class="stat">
-              <span class="stat__label">χ²кр при α = 0.05</span>
+              <span class="stat__label">χ²кр при α = ${iteration.alpha}</span>
               <div class="stat__value">${roundValue(iteration.chiSquareCritical, 6)}</div>
+            </div>
+            <div class="stat">
+              <span class="stat__label">p-value</span>
+              <div class="stat__value">${roundValue(iteration.pValue, 8)}</div>
             </div>
           </div>
 
-          <div class="subtle" style="margin-bottom: 16px;">
-            p-value: ${roundValue(iteration.pValue, 8)} · степеней свободы: ${iteration.degreesFreedom}
+          <div class="formula-box">
+            <div><strong>Используемые формулы:</strong></div>
+            <div><span class="inline-math">S<sub>ср</sub> = m(n + 1) / 2</span></div>
+            <div><span class="inline-math">W = 12 · Σ(S<sub>j</sub> - S<sub>ср</sub>)² / (m²(n³ - n) - mΣT)</span></div>
+            <div><span class="inline-math">T = Σ(t³ - t)</span> по каждой группе связных рангов внутри строки эксперта.</div>
+            <div><span class="inline-math">χ² = m(n - 1)W</span></div>
+            <div class="subtle" style="margin-top: 8px;">Если связок нет, то ΣT = 0, и формула переходит в обычный вариант без поправок.</div>
           </div>
 
-          ${buildColumnSummaryTable(objectNames, iteration.columnSums)}
-          ${tieNoteHtml}
+          <div class="two-columns" style="margin-top: 16px;">
+            <div class="card">
+              <h4 class="card__title">Исходная матрица</h4>
+              ${buildMatrixTable(iteration.activeExpertNames, objectNames, rawMatrix)}
+            </div>
+            <div class="card">
+              <h4 class="card__title">Нормализованная матрица рангов</h4>
+              ${buildMatrixTable(iteration.activeExpertNames, objectNames, normalizedMatrix)}
+            </div>
+          </div>
 
           <div class="card" style="margin-top: 16px;">
-            <h4 class="card__title">Упорядочение объектов</h4>
+            <h4 class="card__title">Обработка связных рангов</h4>
+            ${buildTieInfoHtml(iteration.normalizedExpertData)}
+            <div class="list-compact" style="margin-top: 12px;">
+              ${tieCorrectionBreakdownHtml}
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 16px;">
+            <h4 class="card__title">Суммы рангов и итоговый порядок объектов</h4>
+            ${buildColumnSummaryTable(objectNames, iteration.columnSums, iteration.collectiveRanks)}
+            ${collectiveTieNoteHtml}
             <div class="ranking-list">
-              ${createRankingItems(objectNames, iteration.columnSums, iteration.sortedValues)}
+              ${createRankingItems(objectNames, iteration.columnSums, iteration.collectiveRanks, iteration.sortedValues)}
             </div>
           </div>
 
@@ -1225,15 +1458,13 @@
     };
 
     const renderResults = (calculationResult, objectNames) => {
-      const { finalStatus, iterations, removedExperts, finalIteration } = calculationResult;
+      const { finalStatus, iterations, removedExperts } = calculationResult;
 
-      const topMessageClass = finalStatus === "СОГЛАСОВАНО" ? "success" : "error";
-      const topMessageText =
-        finalStatus === "СОГЛАСОВАНО"
-          ? "Комиссия признана согласованной по критерию χ²."
-          : "Согласованность не достигнута даже после последовательного исключения диссидентов.";
-
-      addMessage(topMessageClass, topMessageText);
+      if (finalStatus === "СОГЛАСОВАНО") {
+        addMessage("success", "Комиссия признана согласованной по критерию χ².");
+      } else {
+        addMessage("error", "Согласованность не достигнута даже после последовательного исключения диссидентов.");
+      }
 
       if (removedExperts.length > 0) {
         addMessage(
@@ -1242,41 +1473,66 @@
         );
       }
 
-      const metaNote = document.createElement("div");
-      metaNote.className = "note";
-      metaNote.innerHTML = `
-        Формулы считаются без связок в исходных экспертных строках: каждый эксперт задаёт полную перестановку рангов.
-        Для критерия χ² используется численное вычисление критического значения при α = 0.05.
-      `;
-      messageContainer.appendChild(metaNote);
+      addMessage(
+        "note",
+        "Связные ранги автоматически нормализуются в средние ранги по каждой строке эксперта. После этого расчёт выполняется уже по скорректированной ранговой матрице."
+      );
 
-      resultsContainer.innerHTML = iterations
-        .map((iteration, iterationIndex) => {
-          return renderIterationCard(
-            iteration,
-            objectNames,
-            iterationIndex,
-            iterationIndex === iterations.length - 1,
-            finalStatus
-          );
-        })
-        .join("");
+      resultsContainer.innerHTML = iterations.map((iteration, iterationIndex) => {
+        return renderIterationCard(
+          iteration,
+          objectNames,
+          iterationIndex,
+          iterationIndex === iterations.length - 1,
+          finalStatus
+        );
+      }).join("");
+    };
 
-      if (finalStatus === "СОГЛАСОВАНО") {
-        const finalSummaryElement = document.createElement("section");
-        finalSummaryElement.className = "card";
-        finalSummaryElement.innerHTML = `
-          <h3 class="card__title">Итоговый список объектов</h3>
-          <div class="ranking-list">
-            ${createRankingItems(objectNames, finalIteration.columnSums, finalIteration.sortedValues)}
-          </div>
-          <div class="footer-note">
-            Интерпретация как в методике: минимальная сумма рангов означает лучший объект,
-            максимальная — худший.
-          </div>
-        `;
-        resultsContainer.appendChild(finalSummaryElement);
-      }
+    const fillDemoData = () => {
+      expertCountInput.value = "5";
+      objectCountInput.value = "4";
+      alphaSelect.value = "0.05";
+      rebuildAll({ preserve: false });
+
+      const expertNames = ["Эксперт А", "Эксперт Б", "Эксперт В", "Эксперт Г", "Эксперт Д"];
+      const objectNames = ["Объект 1", "Объект 2", "Объект 3", "Объект 4"];
+      const demoMatrix = [
+        [1, 2, 2, 4],
+        [1, 2, 3, 4],
+        [1, 1, 3, 4],
+        [2, 2, 3, 4],
+        [1, 3, 3, 4]
+      ];
+
+      document.querySelectorAll(".expert-name-input").forEach((inputElement, index) => {
+        inputElement.value = expertNames[index];
+      });
+
+      document.querySelectorAll(".object-name-input").forEach((inputElement, index) => {
+        inputElement.value = objectNames[index];
+      });
+
+      rebuildHeadersOnly();
+
+      demoMatrix.forEach((row, expertIndex) => {
+        row.forEach((value, objectIndex) => {
+          const inputElement = document.querySelector(`.matrix-input[data-expert-index="${expertIndex}"][data-object-index="${objectIndex}"]`);
+          if (inputElement) {
+            inputElement.value = String(value);
+          }
+        });
+      });
+
+      clearOutput();
+      addMessage("note", "Демо заполнилось примером со связными рангами. Можешь сразу нажать «Рассчитать». ");
+    };
+
+    const clearMatrix = () => {
+      document.querySelectorAll(".matrix-input").forEach((inputElement) => {
+        inputElement.value = "";
+      });
+      clearOutput();
     };
 
     const calculate = () => {
@@ -1284,97 +1540,26 @@
 
       const expertNames = getExpertNames();
       const objectNames = getObjectNames();
-      const rankMatrix = readRankMatrix();
+      const rawMatrix = readRawMatrix();
+      const alpha = Number.parseFloat(alphaSelect.value);
+      const validationErrorText = validateRawMatrix(rawMatrix, expertNames);
 
-      if (expertNames.length < 2 || objectNames.length < 2) {
-        addMessage("error", "Нужно минимум 2 эксперта и 2 объекта.");
+      if (validationErrorText) {
+        addMessage("error", escapeHtml(validationErrorText));
         return;
       }
 
-      const validationError = validateRankMatrix(rankMatrix, expertNames, objectNames);
-
-      if (validationError) {
-        addMessage("error", escapeHtml(validationError));
-        return;
-      }
-
-      try {
-        const calculationResult = runWholeAlgorithm(expertNames, objectNames, rankMatrix);
-        renderResults(calculationResult, objectNames);
-      } catch (error) {
-        console.error(error);
-        addMessage(
-          "error",
-          "Во время расчёта случилась ошибка. Проверьте введённые значения. Математика иногда кусается."
-        );
-      }
+      const calculationResult = runWholeAlgorithm(expertNames, objectNames, rawMatrix, alpha);
+      renderResults(calculationResult, objectNames);
     };
 
-    const clearMatrix = () => {
-      Array.from(document.querySelectorAll(".matrix-input")).forEach((inputElement) => {
-        inputElement.value = "";
-      });
-
-      clearOutput();
-    };
-
-    const fillDemoData = () => {
-      expertCountInput.value = "5";
-      objectCountInput.value = "4";
-      rebuildAll();
-
-      const expertNames = ["Анна", "Борис", "Вера", "Глеб", "Дарья"];
-      const objectNames = ["Проект А", "Проект Б", "Проект В", "Проект Г"];
-      const demoRankMatrix = [
-        [1, 2, 3, 4],
-        [1, 2, 4, 3],
-        [2, 1, 3, 4],
-        [1, 3, 2, 4],
-        [4, 3, 2, 1]
-      ];
-
-      document.querySelectorAll(".expert-name-input").forEach((inputElement, index) => {
-        inputElement.value = expertNames[index] || inputElement.value;
-      });
-
-      document.querySelectorAll(".object-name-input").forEach((inputElement, index) => {
-        inputElement.value = objectNames[index] || inputElement.value;
-      });
-
-      renderMatrix();
-
-      demoRankMatrix.forEach((expertRow, expertIndex) => {
-        expertRow.forEach((rankValue, objectIndex) => {
-          const inputElement = document.querySelector(
-            `.matrix-input[data-expert-index="${expertIndex}"][data-object-index="${objectIndex}"]`
-          );
-
-          if (inputElement) {
-            inputElement.value = String(rankValue);
-          }
-        });
-      });
-
-      clearOutput();
-      addMessage("note", "Демо-данные загружены. Нажмите «Рассчитать», чтобы увидеть весь путь алгоритма.");
-    };
-
-    buildFormButton.addEventListener("click", rebuildAll);
+    buildFormButton.addEventListener("click", () => rebuildAll({ preserve: true }));
+    refreshHeadersButton.addEventListener("click", rebuildHeadersOnly);
     fillDemoButton.addEventListener("click", fillDemoData);
     calculateButton.addEventListener("click", calculate);
     clearMatrixButton.addEventListener("click", clearMatrix);
 
-    expertNamesContainer.addEventListener("input", () => {
-      renderMatrix();
-      clearOutput();
-    });
-
-    objectNamesContainer.addEventListener("input", () => {
-      renderMatrix();
-      clearOutput();
-    });
-
-    rebuildAll();
+    rebuildAll({ preserve: false });
   </script>
 </body>
 </html>
