@@ -75,7 +75,7 @@
 
     .hero__text {
       margin: 0;
-      max-width: 70rem;
+      max-width: 72rem;
       color: var(--text-muted);
       font-size: 1.125rem;
       line-height: 1.7;
@@ -162,6 +162,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.75rem;
+      margin-top: 1rem;
     }
 
     .button {
@@ -262,7 +263,7 @@
 
     .matrix-table {
       width: 100%;
-      min-width: 46rem;
+      min-width: 64rem;
       border-collapse: collapse;
       table-layout: fixed;
     }
@@ -282,17 +283,29 @@
       font-weight: 800;
     }
 
-    .matrix-table th:first-child,
-    .matrix-table td:first-child {
-      width: 12rem;
-      min-width: 12rem;
+    .matrix-table thead th:first-child,
+    .matrix-table tbody th,
+    .matrix-table tfoot th {
+      width: 16rem;
+      min-width: 16rem;
+      text-align: left;
     }
 
-    .matrix-table tbody th {
+    .matrix-table thead th:first-child {
+      text-align: center;
+    }
+
+    .matrix-table tbody th,
+    .matrix-table tfoot th {
       background: rgba(8, 21, 47, 0.78);
-      text-align: left;
       font-size: 0.98rem;
       font-weight: 700;
+      padding-left: 1rem;
+    }
+
+    .matrix-table tfoot td,
+    .matrix-table tfoot th {
+      background: rgba(8, 21, 47, 0.92);
     }
 
     .matrix-cell-input {
@@ -409,6 +422,16 @@
       padding: 1rem 1.125rem;
     }
 
+    .iteration-note {
+      margin-top: 1rem;
+      border-radius: 1rem;
+      padding: 0.875rem 1rem;
+      background: rgba(9, 23, 50, 0.82);
+      border: 0.0625rem solid rgba(80, 117, 171, 0.22);
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
     .plain-list {
       margin: 0;
       padding-left: 1.25rem;
@@ -463,39 +486,6 @@
       white-space: nowrap;
     }
 
-    .iteration-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.875rem;
-      margin-top: 1rem;
-    }
-
-    .iteration-item {
-      border: 0.0625rem solid rgba(80, 117, 171, 0.24);
-      border-radius: 1rem;
-      background: rgba(9, 23, 50, 0.82);
-      padding: 1rem;
-    }
-
-    .iteration-item__title {
-      margin: 0 0 0.5rem;
-      font-size: 1rem;
-      font-weight: 800;
-    }
-
-    .iteration-item__text {
-      margin: 0;
-      color: var(--text-muted);
-      line-height: 1.65;
-    }
-
-    .hint {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.65;
-      margin-top: 0.875rem;
-    }
-
     @media (max-width: 78rem) {
       .layout {
         grid-template-columns: 1fr;
@@ -539,8 +529,9 @@
       <h1 class="hero__title">Веб-калькулятор коэффициента конкордации</h1>
       <p class="hero__text">
         Система обрабатывает обычные и связные ранги. Если один эксперт ставит нескольким объектам одинаковые значения,
-        такие позиции автоматически преобразуются в средние ранги по правилу связок. В результатах показывается только
-        обработанная матрица рангов — без дублирования исходной таблицы.
+        такие позиции автоматически преобразуются в средние ранги. В результатах по каждой итерации показывается
+        подробная обработанная таблица с ранговой матрицей, столбцом T<sub>i</sub>, суммами рангов,
+        отклонениями от средней суммы и квадратами отклонений.
       </p>
     </section>
 
@@ -588,7 +579,7 @@
             </select>
           </div>
 
-          <div class="button-row" style="margin-top: 1rem;">
+          <div class="button-row">
             <button class="button button--primary" id="buildFormButton" type="button">Построить форму</button>
             <button class="button button--secondary" id="fillDemoButton" type="button">Заполнить демо</button>
           </div>
@@ -608,7 +599,7 @@
           <button class="button button--primary button--full" id="calculateButton" type="button">
             Рассчитать
           </button>
-          <p class="hint">
+          <p class="section-text" style="margin-top: 1rem; margin-bottom: 0;">
             Для каждой строки можно вводить, например: 1, 2, 2, 4 или 10, 10, 20, 30.
             Система сама переведёт эти значения в корректные ранги.
           </p>
@@ -619,8 +610,7 @@
         <section class="card workspace-card">
           <h2 class="workspace-title">Матрица «эксперт — объект»</h2>
           <p class="workspace-text">
-            Ниже вводится исходная матрица. Она нужна только для ввода. В результатах отображается одна обработанная матрица —
-            уже после преобразования в ранги с учётом связок.
+            Здесь вводится исходная матрица значений. В результатах будут показаны уже обработанные ранги по каждой итерации.
           </p>
 
           <div class="matrix-shell">
@@ -632,7 +622,7 @@
           <h2 class="results__title">Результаты расчёта</h2>
           <div id="resultsContainer">
             <div class="results-empty">
-              Здесь появятся обработанная матрица рангов, коэффициент конкордации, проверка по χ²,
+              Здесь появятся таблицы по итерациям, коэффициент конкордации, проверка по χ²,
               найденные связки и итоговый порядок объектов.
             </div>
           </div>
@@ -772,7 +762,7 @@
       const expertNames = getExpertNames();
       const objectNames = getObjectNames();
 
-      let tableHeadHtml = "<tr><th>Эксперт</th>";
+      let tableHeadHtml = "<tr><th>Эксперт / Объект</th>";
 
       objectNames.forEach((objectName) => {
         tableHeadHtml += `<th>${escapeHtml(objectName)}</th>`;
@@ -815,7 +805,7 @@
       buildInputMatrix();
       resultsContainer.innerHTML = `
         <div class="results-empty">
-          Здесь появятся обработанная матрица рангов, коэффициент конкордации, проверка по χ²,
+          Здесь появятся таблицы по итерациям, коэффициент конкордации, проверка по χ²,
           найденные связки и итоговый порядок объектов.
         </div>
       `;
@@ -869,7 +859,7 @@
 
       const normalizedRanks = new Array(rawRow.length).fill(0);
       const tieGroups = [];
-      let tieCorrection = 0;
+      let tieCorrectionRaw = 0;
       let sortedIndex = 0;
 
       while (sortedIndex < sortedItems.length) {
@@ -904,7 +894,7 @@
               .map((item) => item.objectIndex)
           });
 
-          tieCorrection += (groupSize ** 3) - groupSize;
+          tieCorrectionRaw += (groupSize ** 3) - groupSize;
         }
 
         sortedIndex = groupEndIndex + 1;
@@ -913,7 +903,8 @@
       return {
         normalizedRanks,
         tieGroups,
-        tieCorrection
+        tieCorrectionRaw,
+        tieCoefficient: tieCorrectionRaw / 12
       };
     };
 
@@ -934,25 +925,33 @@
       return columnSums;
     };
 
-    const calculateConcordance = (normalizedMatrix, tieCorrections, alphaValue) => {
+    const calculateConcordance = (normalizedMatrix, tieCorrectionRawArray, alphaValue) => {
       const expertCount = normalizedMatrix.length;
       const objectCount = normalizedMatrix[0].length;
       const columnSums = getColumnSums(normalizedMatrix);
       const averageColumnSum = (expertCount * (objectCount + 1)) / 2;
 
-      let squaredDeviationSum = 0;
-
-      columnSums.forEach((sumValue) => {
-        squaredDeviationSum += (sumValue - averageColumnSum) ** 2;
+      const deviations = columnSums.map((sumValue) => {
+        return sumValue - averageColumnSum;
       });
 
-      const totalTieCorrection = tieCorrections.reduce((accumulator, currentValue) => {
+      const squaredDeviations = deviations.map((deviationValue) => {
+        return deviationValue ** 2;
+      });
+
+      const squaredDeviationSum = squaredDeviations.reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
       }, 0);
 
+      const totalTieCorrectionRaw = tieCorrectionRawArray.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue;
+      }, 0);
+
+      const totalTieCoefficient = totalTieCorrectionRaw / 12;
+
       const denominator =
         (expertCount ** 2) * ((objectCount ** 3) - objectCount) -
-        expertCount * totalTieCorrection;
+        expertCount * totalTieCorrectionRaw;
 
       const concordanceCoefficient = denominator === 0
         ? 0
@@ -972,8 +971,11 @@
         objectCount,
         columnSums,
         averageColumnSum,
+        deviations,
+        squaredDeviations,
         squaredDeviationSum,
-        totalTieCorrection,
+        totalTieCorrectionRaw,
+        totalTieCoefficient,
         denominator,
         concordanceCoefficient,
         chiSquareCalculated,
@@ -1016,24 +1018,29 @@
           rawRow,
           normalizedRanks: normalizedResult.normalizedRanks,
           tieGroups: normalizedResult.tieGroups,
-          tieCorrection: normalizedResult.tieCorrection
+          tieCorrectionRaw: normalizedResult.tieCorrectionRaw,
+          tieCoefficient: normalizedResult.tieCoefficient
         };
       });
     };
 
-    const calculateIterations = (processedExperts, objectNames, alphaValue) => {
+    const calculateIterations = (processedExperts, alphaValue) => {
       const iterations = [];
       let activeExperts = [...processedExperts];
       let safetyCounter = 0;
 
       while (activeExperts.length >= 2 && safetyCounter < 25) {
         const normalizedMatrix = activeExperts.map((expertData) => expertData.normalizedRanks);
-        const tieCorrections = activeExperts.map((expertData) => expertData.tieCorrection);
-        const calculationResult = calculateConcordance(normalizedMatrix, tieCorrections, alphaValue);
+        const tieCorrectionRawArray = activeExperts.map((expertData) => expertData.tieCorrectionRaw);
+        const calculationResult = calculateConcordance(normalizedMatrix, tieCorrectionRawArray, alphaValue);
 
         const iterationData = {
-          activeExperts: activeExperts.map((expertData) => ({ ...expertData })),
-          calculationResult
+          activeExperts: activeExperts.map((expertData) => ({
+            ...expertData
+          })),
+          calculationResult,
+          removedExpertName: null,
+          deviationByExpert: null
         };
 
         iterations.push(iterationData);
@@ -1081,46 +1088,6 @@
 
           return leftItem.consensusRank - rightItem.consensusRank;
         });
-    };
-
-    const renderProcessedMatrixTable = (expertRows, objectNames) => {
-      let tableHeadHtml = "<tr><th>Эксперт</th>";
-
-      objectNames.forEach((objectName) => {
-        tableHeadHtml += `<th>${escapeHtml(objectName)}</th>`;
-      });
-
-      tableHeadHtml += "</tr>";
-
-      let tableBodyHtml = "";
-
-      expertRows.forEach((expertData) => {
-        tableBodyHtml += `<tr><th>${escapeHtml(expertData.expertName)}</th>`;
-
-        expertData.normalizedRanks.forEach((rankValue) => {
-          tableBodyHtml += `<td>${escapeHtml(formatNumber(rankValue, 3))}</td>`;
-        });
-
-        tableBodyHtml += "</tr>";
-      });
-
-      return `
-        <div class="result-block">
-          <div class="result-block__header">
-            <h3 class="result-block__title">Обработанная матрица рангов</h3>
-          </div>
-          <div class="result-block__content">
-            <div class="matrix-shell">
-              <div class="matrix-scroll">
-                <table class="matrix-table">
-                  <thead>${tableHeadHtml}</thead>
-                  <tbody>${tableBodyHtml}</tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
     };
 
     const renderTieGroups = (expertRows, objectNames) => {
@@ -1197,44 +1164,107 @@
       `;
     };
 
-    const renderIterations = (iterations) => {
-      const iterationItemsHtml = iterations.map((iterationData, iterationIndex) => {
-        const calculationResult = iterationData.calculationResult;
-        const significanceText = calculationResult.criticalValue === null
-          ? "Критическое значение χ² не найдено в встроенной таблице."
-          : calculationResult.isSignificant
-            ? "Согласованность подтверждена."
-            : "Согласованность не подтверждена.";
+    const renderIterationTable = (iterationData, iterationIndex, objectNames) => {
+      const calculationResult = iterationData.calculationResult;
 
-        const removalText = iterationData.removedExpertName
-          ? ` На следующем шаге исключён эксперт-диссидент: ${escapeHtml(iterationData.removedExpertName)}.`
-          : "";
+      let tableHeadHtml = "<tr><th>Эксперт / Объект</th>";
 
-        return `
-          <div class="iteration-item">
-            <h4 class="iteration-item__title">Итерация ${iterationIndex + 1}</h4>
-            <p class="iteration-item__text">
-              Экспертов в расчёте: ${escapeHtml(String(calculationResult.expertCount))}. 
-              W = ${escapeHtml(formatNumber(calculationResult.concordanceCoefficient, 4))}. 
-              χ²расч = ${escapeHtml(formatNumber(calculationResult.chiSquareCalculated, 4))}. 
-              χ²крит = ${escapeHtml(
-                calculationResult.criticalValue === null
-                  ? "нет данных"
-                  : formatNumber(calculationResult.criticalValue, 4)
-              )}. 
-              ${escapeHtml(significanceText)}${removalText}
-            </p>
+      objectNames.forEach((objectName) => {
+        tableHeadHtml += `<th>${escapeHtml(objectName)}</th>`;
+      });
+
+      tableHeadHtml += "<th>T<sub>i</sub></th></tr>";
+
+      let tableBodyHtml = "";
+
+      iterationData.activeExperts.forEach((expertData) => {
+        tableBodyHtml += `<tr><th>${escapeHtml(expertData.expertName)}</th>`;
+
+        expertData.normalizedRanks.forEach((rankValue) => {
+          tableBodyHtml += `<td>${escapeHtml(formatNumber(rankValue, 3))}</td>`;
+        });
+
+        tableBodyHtml += `<td>${escapeHtml(formatNumber(expertData.tieCoefficient, 3))}</td>`;
+        tableBodyHtml += "</tr>";
+      });
+
+      let tableFootHtml = `
+        <tr>
+          <th>Сумма рангов S<sub>j</sub></th>
+          ${calculationResult.columnSums.map((sumValue) => `<td>${escapeHtml(formatNumber(sumValue, 3))}</td>`).join("")}
+          <td>${escapeHtml(formatNumber(calculationResult.totalTieCoefficient, 3))}</td>
+        </tr>
+        <tr>
+          <th>Отклонение от средней суммы (S<sub>j</sub> - S<sub>ср</sub>), где S<sub>ср</sub> = ${escapeHtml(formatNumber(calculationResult.averageColumnSum, 3))}</th>
+          ${calculationResult.deviations.map((deviationValue) => `<td>${escapeHtml(formatNumber(deviationValue, 3))}</td>`).join("")}
+          <td>—</td>
+        </tr>
+        <tr>
+          <th>Квадраты отклонений (S<sub>j</sub> - S<sub>ср</sub>)²</th>
+          ${calculationResult.squaredDeviations.map((squareValue) => `<td>${escapeHtml(formatNumber(squareValue, 3))}</td>`).join("")}
+          <td>${escapeHtml(formatNumber(calculationResult.squaredDeviationSum, 3))}</td>
+        </tr>
+      `;
+
+      const significanceText = calculationResult.criticalValue === null
+        ? "Критическое значение χ² не найдено во встроенной таблице."
+        : calculationResult.isSignificant
+          ? "Согласованность подтверждена."
+          : "Согласованность не подтверждена.";
+
+      const iterationNoteHtml = iterationData.removedExpertName
+        ? `
+          <div class="iteration-note">
+            На следующем шаге исключён эксперт-диссидент:
+            <strong>${escapeHtml(iterationData.removedExpertName)}</strong>.
           </div>
-        `;
-      }).join("");
+        `
+        : "";
 
       return `
         <div class="result-block">
           <div class="result-block__header">
-            <h3 class="result-block__title">Ход расчёта по итерациям</h3>
+            <h3 class="result-block__title">Итерация ${iterationIndex + 1}</h3>
           </div>
           <div class="result-block__content">
-            <div class="iteration-list">${iterationItemsHtml}</div>
+            <div class="matrix-shell">
+              <div class="matrix-scroll">
+                <table class="matrix-table">
+                  <thead>${tableHeadHtml}</thead>
+                  <tbody>${tableBodyHtml}</tbody>
+                  <tfoot>${tableFootHtml}</tfoot>
+                </table>
+              </div>
+            </div>
+
+            <div class="summary-grid" style="margin-top: 1rem; margin-bottom: 0;">
+              <div class="summary-card">
+                <div class="summary-card__title">Количество экспертов</div>
+                <div class="summary-card__value">${escapeHtml(String(calculationResult.expertCount))}</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-card__title">Коэффициент конкордации W</div>
+                <div class="summary-card__value">${escapeHtml(formatNumber(calculationResult.concordanceCoefficient, 4))}</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-card__title">χ² расчётное</div>
+                <div class="summary-card__value">${escapeHtml(formatNumber(calculationResult.chiSquareCalculated, 4))}</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-card__title">χ² критическое</div>
+                <div class="summary-card__value">${
+                  calculationResult.criticalValue === null
+                    ? "нет данных"
+                    : escapeHtml(formatNumber(calculationResult.criticalValue, 4))
+                }</div>
+              </div>
+            </div>
+
+            <div class="iteration-note">
+              ${escapeHtml(significanceText)}
+            </div>
+
+            ${iterationNoteHtml}
           </div>
         </div>
       `;
@@ -1278,6 +1308,10 @@
         `
         : "";
 
+      const iterationTablesHtml = iterationList.map((iterationData, iterationIndex) => {
+        return renderIterationTable(iterationData, iterationIndex, objectNames);
+      }).join("");
+
       resultsContainer.innerHTML = `
         <div class="${statusClassName}">
           ${escapeHtml(statusText)}
@@ -1285,15 +1319,15 @@
 
         <div class="summary-grid">
           <div class="summary-card">
-            <div class="summary-card__title">Коэффициент конкордации W</div>
+            <div class="summary-card__title">Финальный коэффициент W</div>
             <div class="summary-card__value">${escapeHtml(formatNumber(finalCalculationResult.concordanceCoefficient, 4))}</div>
           </div>
           <div class="summary-card">
-            <div class="summary-card__title">χ² расчётное</div>
+            <div class="summary-card__title">Финальное χ² расчётное</div>
             <div class="summary-card__value">${escapeHtml(formatNumber(finalCalculationResult.chiSquareCalculated, 4))}</div>
           </div>
           <div class="summary-card">
-            <div class="summary-card__title">χ² критическое</div>
+            <div class="summary-card__title">Финальное χ² критическое</div>
             <div class="summary-card__value">${
               finalCalculationResult.criticalValue === null
                 ? "нет данных"
@@ -1306,11 +1340,10 @@
           </div>
         </div>
 
-        ${renderProcessedMatrixTable(finalIteration.activeExperts, objectNames)}
+        ${iterationTablesHtml}
         ${renderTieGroups(finalIteration.activeExperts, objectNames)}
         ${renderObjectRating(objectRating)}
         ${removedExpertsHtml}
-        ${renderIterations(iterationList)}
       `;
     };
 
@@ -1321,7 +1354,7 @@
         const rawMatrix = readInputMatrix();
         const processedExperts = createProcessedExperts(rawMatrix, expertNames);
         const alphaValue = alphaSelect.value;
-        const iterationList = calculateIterations(processedExperts, objectNames, alphaValue);
+        const iterationList = calculateIterations(processedExperts, alphaValue);
 
         if (iterationList.length === 0) {
           throw new Error("Не удалось выполнить расчёт.");
@@ -1369,10 +1402,10 @@
       buildInputMatrix();
 
       const demoMatrix = [
-        [1, 1, 3, 4],
-        [2, 2, 1, 4],
-        [1, 3, 3, 4],
-        [1, 2, 2, 4],
+        [1, 1, 4, 4],
+        [1, 2, 4, 2],
+        [1, 3, 3, 5],
+        [2, 2, 4, 4],
         [3, 1, 2, 4]
       ];
 
